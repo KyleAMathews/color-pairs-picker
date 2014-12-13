@@ -13,6 +13,7 @@ module.exports = (bg, options) ->
   bg = chroma(bg)
   fg = chroma(bg)
 
+
   # If the bg color is in the lighter side of the spectrum
   if chroma(bg).luminance() > 0.5
     # Bg is dark so immediately brighten the fg to kick things off.
@@ -33,7 +34,7 @@ module.exports = (bg, options) ->
       # we should change to avoid osscilating back and forth over our
       # desired constraints.
       contrast = chroma.contrast(bg, fg)
-      scaler = (6-contrast)/7
+      scaler = (options.contrast - contrast)/(options.contrast + 1)
       debug "scaler:", scaler
 
       # Constraints:
@@ -62,7 +63,7 @@ module.exports = (bg, options) ->
       debug "cycle:", cycleCount
 
       contrast = chroma.contrast(bg, fg)
-      scaler = (6-contrast)/7
+      scaler = (options.contrast - contrast)/(options.contrast + 1)
       debug "scaler:", scaler
 
       if fg.luminance() < 0.98
