@@ -3,6 +3,9 @@ color-pairs-picker
 
 Given a color, it picks a pleasing and [well contrasted](http://contrastrebellion.com/) background and foreground colors
 
+## Demo
+http://kyleamathews.github.io/color-pairs-picker/
+
 ## Install
 `npm install color-pairs-picker`
 
