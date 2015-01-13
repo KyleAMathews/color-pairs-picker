@@ -7,15 +7,14 @@ module.exports = (bg, options) ->
     contrast: 5.5
   }, options)
 
-  debug "Passed in color's luminance:", chroma(bg).luminance()
-  debug "Passed in color is", if chroma(bg).luminance() > 0.5 then "light" else "dark"
+  bg = chroma(bg, 'lab')
+  fg = chroma(bg, 'lab')
 
-  bg = chroma(bg)
-  fg = chroma(bg)
-
+  debug "Passed in color's luminance:", bg.luminance()
+  debug "Passed in color is", if bg.luminance() > 0.5 then "light" else "dark"
 
   # If the bg color is in the lighter side of the spectrum
-  if chroma(bg).luminance() > 0.5
+  if bg.luminance() > 0.5
     # Bg is dark so immediately brighten the fg to kick things off.
     fg = fg.darken(25)
     cycleCount = 0
