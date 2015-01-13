@@ -10,7 +10,7 @@ release-major:
 	@$(call release,major)
 
 build:
-	@$(BIN)/cjsx -cb -o dist src/index.cjsx
+	@$(BIN)/coffee -cb -o dist src/index.coffee
 	@$(BIN)/webpack
 
 publish:
