@@ -4,7 +4,11 @@ objectAssign = require 'object-assign'
 
 module.exports = (bg, options) ->
   options = objectAssign({
-    contrast: 5.5
+    contrast: 5
+    foregroundMax: 0.98
+    foregroundMin: 0.02
+    backgroundMax: 0.85
+    backgroundMin: 0.15
   }, options)
 
   bg = chroma(bg, 'lab')
@@ -39,9 +43,9 @@ module.exports = (bg, options) ->
       # Constraints:
       # Avoid making fg text completely white
       # as well as loosing all color to blackness in the background.
-      if fg.luminance() > 0.02
+      if fg.luminance() > options.foregroundMin
         fg = fg.darken(10 * scaler)
-      if bg.luminance() < 0.85
+      if bg.luminance() < options.backgroundMax
         bg = bg.brighten(5 * scaler)
       else
         bg = bg.darken(5 * scaler)
@@ -65,11 +69,11 @@ module.exports = (bg, options) ->
       scaler = (options.contrast - contrast)/(options.contrast + 1)
       debug "scaler:", scaler
 
-      if fg.luminance() < 0.98
+      if fg.luminance() < options.foregroundMax
         fg = fg.brighten(10 * scaler)
-      # If the background drops below .15 luminance, it becomes hard to see
-      # against a white page background.
-      if bg.luminance() > 0.15
+      # If the background drops below .15 (our default) luminance,
+      # it becomes hard to see against a white page background.
+      if bg.luminance() > options.backgroundMin
         bg = bg.darken(5 * scaler)
       else
         bg = bg.brighten(5 * scaler)

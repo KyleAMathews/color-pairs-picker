@@ -28,3 +28,4 @@ var pair = colorPairsPicker(baseColor);
 // Set a higher contrast over the default 5.5.
 // Note, the more saturated your colors the less contrasty they'll be.
 var pair = colorPairsPicker(baseColor, {contrast: 8});
+```
