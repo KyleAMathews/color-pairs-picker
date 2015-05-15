@@ -1,85 +1,98 @@
 chroma = require 'chroma-js'
-debug = require('debug')('color-pairs-picker')
+#debug = require('debug')('color-pairs-picker')
 objectAssign = require 'object-assign'
+contrastSearch = require './contrastSearch'
 
-module.exports = (bg, options) ->
+module.exports = (color, options) ->
   options = objectAssign({
+    colorIsBackground: true
     contrast: 5
     foregroundMax: 0.98
     foregroundMin: 0.02
     backgroundMax: 0.85
     backgroundMin: 0.15
+    direction: undefined
   }, options)
 
-  bg = chroma(bg, 'lab')
-  fg = chroma(bg, 'lab')
-
-  debug "Passed in color's luminance:", bg.luminance()
-  debug "Passed in color is", if bg.luminance() > 0.5 then "light" else "dark"
-
-  # If the bg color is in the lighter side of the spectrum
-  if bg.luminance() > 0.5
-    # Bg is dark so immediately brighten the fg to kick things off.
-    fg = fg.darken(25)
-    cycleCount = 0
-
-    # There should be at least a contrast of 4.5 to ensure readability.
-    # 5.5 seems like a particularly pleasing place to stop.
-    while chroma.contrast(bg, fg) < options.contrast
-      # Prevent infinite loops if can't get our desired contrast.
-      cycleCount += 1
-      if cycleCount > 30 then break
-
-      debug ""
-      debug "cycle:", cycleCount
-
-      # Measure contrast. The closer we get to our desired contrast, the slower
-      # we should change to avoid osscilating back and forth over our
-      # desired constraints.
-      contrast = chroma.contrast(bg, fg)
-      scaler = (options.contrast - contrast)/(options.contrast + 1)
-      debug "scaler:", scaler
-
-      # Constraints:
-      # Avoid making fg text completely white
-      # as well as loosing all color to blackness in the background.
-      if fg.luminance() > options.foregroundMin
-        fg = fg.darken(10 * scaler)
-      if bg.luminance() < options.backgroundMax
-        bg = bg.brighten(5 * scaler)
-      else
-        bg = bg.darken(5 * scaler)
-
-      debug "fg luminance:", fg.luminance()
-      debug "bg luminance:", bg.luminance()
-      debug "contrast level:", chroma.contrast(bg, fg)
-
-  # bg color is on darker side of spectrum
+  # Get start/end
+  if options.colorIsBackground
+    start = options.foregroundMin
+    end = options.foregroundMax
   else
-    fg = fg.brighten(25)
-    cycleCount = 0
-    while chroma.contrast(bg, fg) < options.contrast
-      cycleCount += 1
-      if cycleCount > 30 then break
+    start = options.backgroundMin
+    end = options.backgroundMax
 
-      debug ""
-      debug "cycle:", cycleCount
+  #console.log "start,end", start,end
+  #console.log "luminance of base color is:", chroma(color, 'lab').luminance()
+  # Decide which direction to go.
+  if options.direction?
+    secondColor = contrastSearch(color, color, start, end, options.direction, options.contrast)
+  else
+    # Decide which direction to search for the second color.
+    endColor = chroma(color, 'lab').luminance(end)
+    startColor = chroma(color, 'lab').luminance(start)
+    #console.log startColor, endColor
+    contrastToStart = chroma.contrast(color, startColor.hex())
+    #console.log "contrast to start", contrastToStart
+    contrastToEnd = chroma.contrast(color, endColor.hex())
+    #console.log "contrast to end"
 
-      contrast = chroma.contrast(bg, fg)
-      scaler = (options.contrast - contrast)/(options.contrast + 1)
-      debug "scaler:", scaler
+    if contrastToEnd > options.contrast
+      #console.log "Finding second color in direction of end"
+      secondColor = contrastSearch(color, color, start, end, 'end', options.contrast)
+    else if contrastToStart > options.contrast
+      #console.log "Finding second color in direction of start"
+      secondColor = contrastSearch(color, color, start, end, 'start', options.contrast)
+    else
+      #console.log "contrast isn't high enough, modifying base color now from direction
+      #of highest contrast endpoint"
+      # We can't get the second color to the proper contrast without modifying
+      # the base color. So we'll chose the endpoint with the highest contrast
+      # and make that the new base color.
 
-      if fg.luminance() < options.foregroundMax
-        fg = fg.brighten(10 * scaler)
-      # If the background drops below .15 (our default) luminance,
-      # it becomes hard to see against a white page background.
-      if bg.luminance() > options.backgroundMin
-        bg = bg.darken(5 * scaler)
+      # Start and end are now based on either the foreground if a background
+      # color was passed in or vise versa.
+      if options.colorIsBackground
+        newStart = options.backgroundMin
+        newEnd = options.backgroundMax
       else
-        bg = bg.brighten(5 * scaler)
+        newStart = options.foregroundMin
+        newEnd = options.foregroundMax
 
-      debug "fg luminance:", fg.luminance()
-      debug "bg luminance:", bg.luminance()
-      debug "contrast level:", chroma.contrast(bg, fg)
+      if contrastToEnd > contrastToStart
+        secondColor = chroma(color, 'lab').luminance(end)
+        #console.log "contrast to end is highest. new second color is", secondColor
 
-  return {bg: bg.hex(), fg: fg.hex()}
+        highestPossibleContrast = chroma.contrast(secondColor.hex(), chroma(color, 'lab').luminance(newStart))
+        #console.log 'possible contrast', highestPossibleContrast
+        if highestPossibleContrast > options.contrast
+          color = contrastSearch(color, secondColor.lab(), newStart, newEnd, 'start', options.contrast)
+        else
+          color = chroma(color, 'lab').luminance(newStart).lab()
+
+        secondColor = secondColor.lab()
+      else
+        secondColor = chroma(color, 'lab').luminance(start)
+        #console.log "contrast to start is highest. new second color is", secondColor
+
+        highestPossibleContrast = chroma.contrast(secondColor.hex(), chroma(color, 'lab').luminance(newEnd))
+        #console.log 'possible contrast', highestPossibleContrast
+        if highestPossibleContrast > options.contrast
+          color = contrastSearch(color, secondColor.hex(), newStart, newEnd, 'end', options.contrast)
+        else
+          color = chroma(color, 'lab').luminance(newEnd).lab()
+
+        secondColor = secondColor.lab()
+
+  #console.log color, secondColor
+
+  if options.colorIsBackground
+    bg = color
+    fg = secondColor
+  else
+    bg = secondColor
+    fg = color
+
+
+
+  return {bg: chroma.lab(bg).hex(), fg: chroma.lab(fg).hex()}
