@@ -2,8 +2,13 @@ chroma = require 'chroma-js'
 #debug = require('debug')('color-pairs-picker')
 objectAssign = require 'object-assign'
 contrastSearch = require './contrastSearch'
+isObject = require 'is-object'
 
-module.exports = (color, options) ->
+module.exports = (color, targetColor, options={}) ->
+  if isObject(targetColor)
+    options = targetColor
+    targetColor = color
+
   options = objectAssign({
     colorIsBackground: true
     contrast: 5
@@ -26,11 +31,11 @@ module.exports = (color, options) ->
   #console.log "luminance of base color is:", chroma(color, 'lab').luminance()
   # Decide which direction to go.
   if options.direction?
-    secondColor = contrastSearch(color, color, start, end, options.direction, options.contrast)
+    secondColor = contrastSearch(targetColor, color, start, end, options.direction, options.contrast)
   else
     # Decide which direction to search for the second color.
-    endColor = chroma(color, 'lab').luminance(end)
-    startColor = chroma(color, 'lab').luminance(start)
+    endColor = chroma(targetColor, 'lab').luminance(end)
+    startColor = chroma(targetColor, 'lab').luminance(start)
     #console.log startColor, endColor
     contrastToStart = chroma.contrast(color, startColor.hex())
     #console.log "contrast to start", contrastToStart
@@ -39,10 +44,10 @@ module.exports = (color, options) ->
 
     if contrastToEnd > options.contrast
       #console.log "Finding second color in direction of end"
-      secondColor = contrastSearch(color, color, start, end, 'end', options.contrast)
+      secondColor = contrastSearch(targetColor, color, start, end, 'end', options.contrast)
     else if contrastToStart > options.contrast
       #console.log "Finding second color in direction of start"
-      secondColor = contrastSearch(color, color, start, end, 'start', options.contrast)
+      secondColor = contrastSearch(targetColor, color, start, end, 'start', options.contrast)
     else
       #console.log "contrast isn't high enough, modifying base color now from direction
       #of highest contrast endpoint"
@@ -60,7 +65,7 @@ module.exports = (color, options) ->
         newEnd = options.foregroundMax
 
       if contrastToEnd > contrastToStart
-        secondColor = chroma(color, 'lab').luminance(end)
+        secondColor = chroma(targetColor, 'lab').luminance(end)
         #console.log "contrast to end is highest. new second color is", secondColor
 
         highestPossibleContrast = chroma.contrast(secondColor.hex(), chroma(color, 'lab').luminance(newStart))
