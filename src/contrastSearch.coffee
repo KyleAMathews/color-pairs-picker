@@ -3,27 +3,30 @@ debug = require('debug')('color-pairs-picker-binary-search-contrast')
 
 counter = 0
 
-module.exports = contrastSearch = (baseColor, compareColor, start, end, direction="end", contrast=5.5) ->
+module.exports = contrastSearch = (targetColor, compareColor, start, end, direction="end", contrast=5.5) ->
   counter += 1
   #console.log "\n"
   #console.log "new recurse"
 
   middle = (start + end) / 2
 
-  #console.log baseColor, start, end, middle, direction
+  #console.log targetColor, compareColor, start, end, middle, direction
 
   # Create new middle color.
-  b = chroma.lab(baseColor)
+  b = chroma(targetColor, 'lab')
+  #console.log b.luminance(middle).css()
   color = b.luminance(middle).lab()
-  #console.log color
+  #console.log "color", color
+  #console.log chroma(color).css()
 
   # Calculate contrast.
-  curContrast = chroma.contrast(chroma.lab(compareColor).hex(), b)
+  curContrast = chroma.contrast(chroma(compareColor).hex(), b)
   #console.log "contrast", curContrast
 
   if counter > 15
     #console.log "too many cycles!!!", counter
     counter = 0
+    #return color
     return color
 
   # Found!
@@ -36,16 +39,17 @@ module.exports = contrastSearch = (baseColor, compareColor, start, end, directio
   if curContrast > contrast
     #console.log "too high"
     if direction is "end"
-      contrastSearch(baseColor, compareColor, start, middle-0.001, direction, contrast)
+      contrastSearch(targetColor, compareColor, start, middle-0.001, direction, contrast)
     else
-      contrastSearch(baseColor, compareColor, middle+0.001, end, direction, contrast)
+      contrastSearch(targetColor, compareColor, middle+0.001, end, direction, contrast)
   else if curContrast < contrast
     #console.log "too low"
     if direction is "start"
-      contrastSearch(baseColor, compareColor, start, middle-0.001, direction, contrast)
+      contrastSearch(targetColor, compareColor, start, middle-0.001, direction, contrast)
     else
-      contrastSearch(baseColor, compareColor, middle+0.001, end, direction, contrast)
+      contrastSearch(targetColor, compareColor, middle+0.001, end, direction, contrast)
 
-#color = 'purple'
-#console.log "the perfect contrast:", contrastSearch(color, 0, .97, "light")
+color = 'rgb(8, 27, 44)'
+targetColor = 'rgb(124, 171, 217)'
+#console.log "the perfect contrast:", contrastSearch(targetColor, color, 0, .97, "end", 4.5)
 #console.log "recursions:", counter
