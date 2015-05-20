@@ -5,6 +5,9 @@ contrastSearch = require './contrastSearch'
 isObject = require 'is-object'
 
 module.exports = (color, targetColor, options={}) ->
+  unless targetColor?
+    targetColor = color
+
   if isObject(targetColor)
     options = targetColor
     targetColor = color
