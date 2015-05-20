@@ -7,25 +7,26 @@
     "url": "https://github.com/KyleAMathews/color-pairs-picker/issues"
   },
   "dependencies": {
-    "chroma-js": "^0.6.3",
-    "debug": "^2.1.1",
+    "chroma-js": "^0.7.2",
+    "debug": "^2.2.0",
     "is-object": "^1.0.1",
     "object-assign": "^2.0.0"
   },
   "devDependencies": {
-    "cjsx-loader": "^1.1.0",
+    "cjsx-loader": "^2.0.1",
     "coffee-loader": "^0.7.2",
-    "coffee-react": "^2.1.2",
-    "coffee-script": "^1.8.0",
-    "css-loader": "^0.9.1",
-    "gulp": "^3.8.10",
-    "react": "^0.12.2",
-    "react-color-picker": "^2.1.4",
-    "react-hot-loader": "^1.1.1",
-    "style-loader": "^0.8.3",
-    "underscore": "^1.7.0",
-    "webpack": "^1.4.15",
-    "webpack-dev-server": "^1.7.0"
+    "coffee-react": "^3.2.0",
+    "coffee-script": "^1.9.2",
+    "css-loader": "^0.12.1",
+    "gulp": "^3.8.11",
+    "node-libs-browser": "^0.5.0",
+    "react": "^0.13.3",
+    "react-color-picker": "^2.1.9",
+    "react-hot-loader": "^1.2.7",
+    "style-loader": "^0.12.2",
+    "underscore": "^1.8.3",
+    "webpack": "^1.9.7",
+    "webpack-dev-server": "^1.8.2"
   },
   "directories": {
     "example": "examples"
