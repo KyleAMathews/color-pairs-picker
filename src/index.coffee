@@ -4,7 +4,10 @@ objectAssign = require 'object-assign'
 contrastSearch = require './contrastSearch'
 isObject = require 'is-object'
 
-module.exports = (color, targetColor, options={}) ->
+module.exports = colorPicker = (color, targetColor, options={}) ->
+  unless targetColor?
+    targetColor = color
+
   if isObject(targetColor)
     options = targetColor
     targetColor = color
@@ -40,7 +43,7 @@ module.exports = (color, targetColor, options={}) ->
     contrastToStart = chroma.contrast(color, startColor.hex())
     #console.log "contrast to start", contrastToStart
     contrastToEnd = chroma.contrast(color, endColor.hex())
-    #console.log "contrast to end"
+    #console.log "contrast to end", contrastToEnd
 
     if contrastToEnd > options.contrast
       #console.log "Finding second color in direction of end"
@@ -71,7 +74,7 @@ module.exports = (color, targetColor, options={}) ->
         highestPossibleContrast = chroma.contrast(secondColor.hex(), chroma(color, 'lab').luminance(newStart))
         #console.log 'possible contrast', highestPossibleContrast
         if highestPossibleContrast > options.contrast
-          color = contrastSearch(color, secondColor.lab(), newStart, newEnd, 'start', options.contrast)
+          color = contrastSearch(color, secondColor.hex(), newStart, newEnd, 'start', options.contrast)
         else
           color = chroma(color, 'lab').luminance(newStart).lab()
 
@@ -101,3 +104,5 @@ module.exports = (color, targetColor, options={}) ->
 
 
   return {bg: chroma.lab(bg).hex(), fg: chroma.lab(fg).hex()}
+
+#console.log colorPicker('#007EE5', '#007EE5', contrast: 4.5)

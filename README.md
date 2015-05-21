@@ -1,3 +1,6 @@
+[![Build
+Status](https://img.shields.io/travis/KyleAMathews/color-pairs-picker/master.svg?style=flat-square)](http://travis-ci.org/KyleAMathews/color-pairs-picker)
+
 color-pairs-picker
 ==================
 

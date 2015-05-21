@@ -3,7 +3,7 @@ debug = require('debug')('color-pairs-picker-binary-search-contrast')
 
 counter = 0
 
-module.exports = contrastSearch = (targetColor, compareColor, start, end, direction="end", contrast=5.5) ->
+module.exports = contrastSearch = (targetColor, compareColor=targetColor, start=0, end=1, direction="end", contrast=5) ->
   counter += 1
   #console.log "\n"
   #console.log "new recurse"
@@ -51,5 +51,6 @@ module.exports = contrastSearch = (targetColor, compareColor, start, end, direct
 
 color = 'rgb(8, 27, 44)'
 targetColor = 'rgb(124, 171, 217)'
+color = 'red'
+targetColor = 'red'
 #console.log "the perfect contrast:", contrastSearch(targetColor, color, 0, .97, "end", 4.5)
-#console.log "recursions:", counter
