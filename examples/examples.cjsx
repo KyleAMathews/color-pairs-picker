@@ -11,7 +11,7 @@ module.exports = React.createClass
     color = "red"
 
     return {
-      contrast: 5.5
+      contrast: 5
       foregroundMin: 0.02
       foregroundMax: 0.98
       backgroundMin: 0.15
@@ -21,11 +21,11 @@ module.exports = React.createClass
 
   render: ->
     {bg, fg} = colorPairsPicker(@state.color, {
-      contrast: @state.contrast
-      foregroundMin: @state.foregroundMin
-      foregroundMax: @state.foregroundMax
-      backgroundMax: @state.backgroundMax
-      backgroundMin: @state.backgroundMin
+      contrast: parseFloat(@state.contrast)
+      foregroundMin: parseFloat(@state.foregroundMin)
+      foregroundMax: parseFloat(@state.foregroundMax)
+      backgroundMax: parseFloat(@state.backgroundMax)
+      backgroundMin: parseFloat(@state.backgroundMin)
     })
 
     <div style={width:'500px', margin:'0 auto'}>
