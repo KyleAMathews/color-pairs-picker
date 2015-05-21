@@ -13,13 +13,17 @@
     "object-assign": "^2.0.0"
   },
   "devDependencies": {
+    "chai": "^2.3.0",
     "cjsx-loader": "^2.0.1",
     "coffee-loader": "^0.7.2",
     "coffee-react": "^3.2.0",
     "coffee-script": "^1.9.2",
     "css-loader": "^0.12.1",
     "gulp": "^3.8.11",
+    "mocha": "^2.2.5",
+    "mocha-unfunk-reporter": "^0.4.0",
     "node-libs-browser": "^0.5.0",
+    "pre-commit": "^1.0.7",
     "react": "^0.13.3",
     "react-color-picker": "^2.1.9",
     "react-hot-loader": "^1.2.7",
@@ -44,7 +48,8 @@
     "url": "https://github.com/KyleAMathews/color-pairs-picker.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test-watch": "NODE_ENV=test node_modules/.bin/mocha -w --recursive --compilers coffee:coffee-script/register -R mocha-unfunk-reporter",
+    "test": "NODE_ENV=test node_modules/.bin/mocha --recursive --compilers coffee:coffee-script/register -R mocha-unfunk-reporter",
     "watch": "./node_modules/.bin/webpack-dev-server --hot"
   }
 }
