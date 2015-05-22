@@ -20,7 +20,7 @@ module.exports = contrastSearch = (targetColor, compareColor=targetColor, start=
   #console.log chroma(color).css()
 
   # Calculate contrast.
-  curContrast = chroma.contrast(chroma(compareColor).hex(), b)
+  curContrast = chroma.contrast(chroma(compareColor).css(), b.css())
   #console.log "contrast", curContrast
 
   if counter > 15
@@ -32,6 +32,7 @@ module.exports = contrastSearch = (targetColor, compareColor=targetColor, start=
   # Found!
   if (contrast - 0.1) < curContrast and curContrast < (contrast + 0.1)
     #console.log "found!"
+    #console.log 'cycles', counter
     counter = 0
     return color
 

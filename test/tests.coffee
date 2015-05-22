@@ -31,6 +31,23 @@ describe 'color pairs picker', ->
   it 'should return an object', ->
     expect(colorPicker('blue')).to.be.object
 
+  it 'should work when asking for low contrast between colors', ->
+    color = "blue"
+    result = colorPicker(color, contrast: 3)
+    contrast = chroma.contrast(result.bg, result.fg)
+    #console.log color, result, contrast
+    # We give ourselves a bit more leniency as converting from lab -> hex is
+    # lossy so contrast can change slightly.
+    expect(2.9 <= contrast <= 3.1).to.be.true
+
+  it 'should work when asking for high contrast between colors', ->
+    color = "lightgrey"
+    result = colorPicker(color, contrast: 12)
+    contrast = chroma.contrast(result.bg, result.fg)
+    # We give ourselves a bit more leniency as converting from lab -> hex is
+    # lossy so contrast can change slightly.
+    expect(11.9 <= contrast <= 12.1).to.be.true
+
   it 'should return color with contrast that is within 0.1 of what is requested', ->
     colorPickerTester = (color) ->
       result = colorPicker(color)
@@ -38,7 +55,7 @@ describe 'color pairs picker', ->
       #console.log color, result, contrast
       # We give ourselves a bit more leniency as converting from lab -> hex is
       # lossy so contrast can change slightly.
-      expect(4.89 <= contrast <= 5.11).to.be.true
+      expect(4.9 <= contrast <= 5.1).to.be.true
 
     colorPickerTester('blue')
     colorPickerTester('pink')

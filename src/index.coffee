@@ -40,9 +40,9 @@ module.exports = colorPicker = (color, targetColor, options={}) ->
     endColor = chroma(targetColor, 'lab').luminance(end)
     startColor = chroma(targetColor, 'lab').luminance(start)
     #console.log startColor, endColor
-    contrastToStart = chroma.contrast(color, startColor.hex())
+    contrastToStart = chroma.contrast(color, startColor.css())
     #console.log "contrast to start", contrastToStart
-    contrastToEnd = chroma.contrast(color, endColor.hex())
+    contrastToEnd = chroma.contrast(color, endColor.css())
     #console.log "contrast to end", contrastToEnd
 
     if contrastToEnd > options.contrast
@@ -71,10 +71,10 @@ module.exports = colorPicker = (color, targetColor, options={}) ->
         secondColor = chroma(targetColor, 'lab').luminance(end)
         #console.log "contrast to end is highest. new second color is", secondColor
 
-        highestPossibleContrast = chroma.contrast(secondColor.hex(), chroma(color, 'lab').luminance(newStart))
+        highestPossibleContrast = chroma.contrast(secondColor.css(), chroma(color, 'lab').luminance(newStart))
         #console.log 'possible contrast', highestPossibleContrast
         if highestPossibleContrast > options.contrast
-          color = contrastSearch(color, secondColor.hex(), newStart, newEnd, 'start', options.contrast)
+          color = contrastSearch(color, secondColor.css(), newStart, newEnd, 'start', options.contrast)
         else
           color = chroma(color, 'lab').luminance(newStart).lab()
 
@@ -83,10 +83,10 @@ module.exports = colorPicker = (color, targetColor, options={}) ->
         secondColor = chroma(color, 'lab').luminance(start)
         #console.log "contrast to start is highest. new second color is", secondColor
 
-        highestPossibleContrast = chroma.contrast(secondColor.hex(), chroma(color, 'lab').luminance(newEnd))
+        highestPossibleContrast = chroma.contrast(secondColor.css(), chroma(color, 'lab').luminance(newEnd))
         #console.log 'possible contrast', highestPossibleContrast
         if highestPossibleContrast > options.contrast
-          color = contrastSearch(color, secondColor.hex(), newStart, newEnd, 'end', options.contrast)
+          color = contrastSearch(color, secondColor.css(), newStart, newEnd, 'end', options.contrast)
         else
           color = chroma(color, 'lab').luminance(newEnd).lab()
 
@@ -103,6 +103,6 @@ module.exports = colorPicker = (color, targetColor, options={}) ->
 
 
 
-  return {bg: chroma.lab(bg).hex(), fg: chroma.lab(fg).hex()}
+  return {bg: chroma.lab(bg).css(), fg: chroma.lab(fg).css()}
 
 #console.log colorPicker('#007EE5', '#007EE5', contrast: 4.5)
