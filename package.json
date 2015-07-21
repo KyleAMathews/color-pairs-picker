@@ -7,7 +7,7 @@
     "url": "https://github.com/KyleAMathews/color-pairs-picker/issues"
   },
   "dependencies": {
-    "chroma-js": "^0.7.2",
+    "chroma-js": "0.7.2",
     "debug": "^2.2.0",
     "is-object": "^1.0.1",
     "object-assign": "^2.0.0"
