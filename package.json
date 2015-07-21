@@ -1,7 +1,7 @@
 {
   "name": "color-pairs-picker",
   "description": "Given a color, it picks a pleasing and well contrasted background and foreground colors",
-  "version": "1.3.4",
+  "version": "1.3.5",
   "author": "Kyle Mathews <mathews.kyle@gmail.com>",
   "bugs": {
     "url": "https://github.com/KyleAMathews/color-pairs-picker/issues"
