@@ -1,5 +1,5 @@
 chroma = require 'chroma-js'
-debug = require('debug')('color-pairs-picker-binary-search-contrast')
+#debug = require('debug')('color-pairs-picker-binary-search-contrast')
 
 counter = 0
 
